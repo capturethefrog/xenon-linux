@@ -137,9 +137,9 @@ static irqreturn_t snd_xenon_interrupt(int irq, void *dev_id)
 	return IRQ_HANDLED;
 }
 
-static void snd_xenon_timer_fn(unsigned long data)
+static void snd_xenon_timer_fn(struct timer_list *t)
 {
-	struct snd_xenon *chip = (struct snd_xenon *)data;
+	struct snd_xenon *chip = from_timer(chip, t, timer);
 	u32 reg;
 	int rptr_descr, wptr_descr, cur_len, size;
 
@@ -575,11 +575,8 @@ static int snd_xenon_create(struct snd_card *card,
 
 	*rchip = chip;
 
-	init_timer(&chip->timer);
-	chip->timer.function = snd_xenon_timer_fn;
-	chip->timer.data = (unsigned long)chip;
 	chip->timer_in_use = 1;
-	add_timer(&chip->timer);
+	timer_setup(&chip->timer, snd_xenon_timer_fn, 0);
 
 	printk("snd_xenon: driver initialized\n");
 
