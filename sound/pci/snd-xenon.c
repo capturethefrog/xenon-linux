@@ -450,7 +450,7 @@ static int snd_xenon_new_pcm(struct snd_xenon *chip)
 
 	/* pre-allocation of buffers */
 	snd_pcm_lib_preallocate_pages_for_all(pcm, SNDRV_DMA_TYPE_DEV,
-	snd_dma_pci_data(chip->pci), 64*1024, 64*1024);
+	&chip->pci->dev, 64*1024, 64*1024);
 
 	err = snd_pcm_new(chip->card, "Xenon Audio", 1, 1, 0, &pcm);
 	if (err < 0)
@@ -461,7 +461,7 @@ static int snd_xenon_new_pcm(struct snd_xenon *chip)
 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK,
 				&snd_xenon_spdif_playback_ops);
 	snd_pcm_lib_preallocate_pages_for_all(pcm, SNDRV_DMA_TYPE_DEV,
-	snd_dma_pci_data(chip->pci), 64*1024, 64*1024);
+	&chip->pci->dev, 64*1024, 64*1024);
 
 	return 0;
 }
