@@ -83,7 +83,7 @@ static const struct rtc_class_ops xenon_rtc_ops = {
 
 static int __init xenon_rtc_probe(struct platform_device *pdev)
 {
-	struct rtc_device *rtc = rtc_device_register(DRV_NAME, &pdev->dev,
+	struct rtc_device *rtc = devm_rtc_device_register(&pdev->dev, DRV_NAME,
 				     &xenon_rtc_ops, THIS_MODULE);
 
 	printk("xenon_rtc_probe(%p) = %p\n", pdev, rtc);
@@ -94,20 +94,11 @@ static int __init xenon_rtc_probe(struct platform_device *pdev)
 	return 0;
 }
 
-static int __exit xenon_rtc_remove(struct platform_device *pdev)
-{
-	struct rtc_device *rtc = platform_get_drvdata(pdev);
-
-	rtc_device_unregister(rtc);
-	return 0;
-}
-
 static struct platform_driver xenon_rtc_driver = {
 	.driver		= {
 		.name	= DRV_NAME,
 		.owner	= THIS_MODULE,
-	},
-	.remove		= __exit_p(xenon_rtc_remove),
+	}
 };
 
 static int __init xenon_rtc_init(void)
